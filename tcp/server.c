@@ -8,7 +8,6 @@
 #include <sys/types.h>
 
 #define MAX 80
-#define PORT 8080
 #define SA struct sockaddr
 
 void chat(int sockfd)
@@ -38,12 +37,20 @@ void chat(int sockfd)
   }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
   struct sockaddr_in servaddr, cli;
   int sockfd, connfd;
   socklen_t len = sizeof(servaddr);
   
+  int port_addr;
+  if (argc < 2)
+  {
+    port_addr = 9734;
+  }
+  else
+    port_addr = atoi( argv[1]);
+
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd == -1)
   {
@@ -57,7 +64,7 @@ int main()
 
   servaddr.sin_family = AF_INET;
   servaddr.sin_addr.s_addr = htonl(INADDR_ANY);
-  servaddr.sin_port = htons(PORT);
+  servaddr.sin_port = htons(port_addr);
 
   if (bind(sockfd, (SA*)&servaddr, len) != 0)
   {

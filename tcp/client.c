@@ -7,8 +7,6 @@
 #include <sys/socket.h>
 
 #define MAX 80
-#define PORT 8080
-#define INET_ADDR "127.0.0.1"
 #define SA struct sockaddr
 
 void chat(int sockfd)
@@ -36,10 +34,22 @@ void chat(int sockfd)
   }
 }
 
-int main()
+int main(int argc, char* argv[])
 {
   int sockfd, connfd;
   struct sockaddr_in servaddr, cli;
+
+  int port_addr;
+  char* inet_addr_str;
+  if (argc < 3)
+  {
+     port_addr = 9734;
+     inet_addr_str = "127.0.0.1";
+  } else
+  {
+    inet_addr_str = argv[1];
+    port_addr = atoi(argv[2]);
+  }
 
   sockfd = socket(AF_INET, SOCK_STREAM, 0);
   if (sockfd == -1)
@@ -53,8 +63,8 @@ int main()
   memset(&servaddr, 0, sizeof(servaddr));
 
   servaddr.sin_family = AF_INET;
-  servaddr.sin_addr.s_addr = inet_addr(INET_ADDR);
-  servaddr.sin_port = htons(PORT);
+  servaddr.sin_addr.s_addr = inet_addr(inet_addr_str);
+  servaddr.sin_port = htons(port_addr);
 
   if (connect(sockfd, (SA*)&servaddr, sizeof(servaddr)) != 0)
   {
