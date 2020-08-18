@@ -6,9 +6,22 @@
 #include <netinet/in.h>
 #include <sys/socket.h>
 #include <sys/types.h>
+#include <arpa/inet.h>
 
 #define MAX 80
 #define SA struct sockaddr
+
+void print_ipv4()
+{
+  char host[256];
+  char *IP;
+  struct hostent *host_entry;
+  int hostname;
+  hostname = gethostname(host, sizeof(host)); //find the host name
+  host_entry = gethostbyname(host); //find host information
+  IP = inet_ntoa(*((struct in_addr*) host_entry->h_addr_list[0]));
+  printf("Server Address: %s\n", IP); 
+}
 
 void chat(int sockfd)
 {
@@ -39,6 +52,7 @@ void chat(int sockfd)
 
 int main(int argc, char* argv[])
 {
+  print_ipv4();
   struct sockaddr_in servaddr, cli;
   int sockfd, connfd;
   socklen_t len = sizeof(servaddr);
